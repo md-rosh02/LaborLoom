@@ -1,14 +1,76 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from "react-intersection-observer"; // ✅ Corrected import
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useInView } from "react-intersection-observer";
 import { BoltIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import JobCard from './JobCard';
 
-const JourneySection = ({ jobPosts }) => {
+// Sample job posts data
+const sampleJobPosts = [
+  {
+    title: "Senior Frontend Developer",
+    company: "TechCorp Solutions",
+    description: "Join our team to build next-generation web applications using React and modern web technologies.",
+    buttonText: "Apply Now"
+  },
+  {
+    title: "Full Stack Engineer",
+    company: "Innovation Labs",
+    description: "Looking for a passionate developer to work on cutting-edge projects with latest technologies.",
+    buttonText: "Learn More"
+  },
+  {
+    title: "UI/UX Designer",
+    company: "Creative Studios",
+    description: "Create beautiful and intuitive user experiences for our flagship products.",
+    buttonText: "View Position"
+  },
+  {
+    title: "DevOps Engineer",
+    company: "Cloud Systems Inc",
+    description: "Help us build and maintain robust cloud infrastructure and deployment pipelines.",
+    buttonText: "Join Us"
+  }
+];
+
+const JourneySection = () => {
   const { ref: journeyRef, inView: journeyInView } = useInView({
     threshold: 0.2,
     triggerOnce: true,
   });
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const cardsToShow = 3;
+
+  // Create a circular array for infinite scrolling
+  const getCircularIndex = (index) => {
+    const length = sampleJobPosts.length;
+    return ((index % length) + length) % length;
+  };
+
+  const getVisibleCards = () => {
+    const cards = [];
+    for (let i = 0; i < cardsToShow; i++) {
+      const index = getCircularIndex(currentIndex + i);
+      cards.push({
+        ...sampleJobPosts[index],
+        key: `${index}-${currentIndex}`
+      });
+    }
+    return cards;
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex(prev => getCircularIndex(prev + 1));
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex(prev => getCircularIndex(prev - 1));
+  };
+
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <motion.div 
@@ -16,7 +78,7 @@ const JourneySection = ({ jobPosts }) => {
       initial={{ opacity: 0 }}
       animate={journeyInView ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: 1 }}
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden"
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden bg-black"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-black z-0" />
       
@@ -75,15 +137,42 @@ const JourneySection = ({ jobPosts }) => {
           className="max-w-7xl mx-auto mb-24"
         >
           <h2 className="text-3xl font-bold mb-8 text-white">Trending on LaborLoom🔥</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {jobPosts.map((post, index) => (
-              <JobCard key={index} {...post} />
-            ))}
+          <div className="relative overflow-hidden mx-auto" style={{ maxWidth: "1200px" }}>
+            <div className="absolute inset-0 pointer-events-none z-10">
+              <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black to-transparent" />
+              <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-black to-transparent" />
+            </div>
+            <div className="relative overflow-hidden mx-auto px-16">
+              <AnimatePresence mode="popLayout">
+                <motion.div 
+                  className="flex gap-8"
+                  key={currentIndex}
+                  initial={{ x: 100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -100, opacity: 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
+                  {getVisibleCards().map((post, index) => (
+                    <motion.div
+                      key={post.key}
+                      className="flex-1 min-w-0"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <JobCard {...post} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
           <div className="flex justify-center mt-8 gap-4">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              onClick={prevSlide}
               className="p-2 rounded-full bg-white/10 hover:bg-white/20"
             >
               <ChevronLeftIcon className="h-6 w-6 text-white" />
@@ -91,6 +180,7 @@ const JourneySection = ({ jobPosts }) => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              onClick={nextSlide}
               className="p-2 rounded-full bg-white/10 hover:bg-white/20"
             >
               <ChevronRightIcon className="h-6 w-6 text-white" />

@@ -33,6 +33,18 @@ const Home = () => {
       buttonText: "Apply now"
     },
     {
+      title: "Full Stack Development Course",
+      company: "650+ students enrolled",
+      description: "Get Placed with ₹3-10 LPA Salary",
+      buttonText: "Apply now"
+    },
+    {
+      title: "Full Stack Development Course",
+      company: "650+ students enrolled",
+      description: "Get Placed with ₹3-10 LPA Salary",
+      buttonText: "Apply now"
+    },
+    {
       title: "Special Certification Courses",
       company: "Limited Time Offer",
       description: "Get FLAT 80% OFF on all online trainings",

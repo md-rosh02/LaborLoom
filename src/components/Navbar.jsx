@@ -95,7 +95,14 @@ const Navbar = () => {
                 exit="exit"
                 className="absolute top-full mt-2 bg-black/90 backdrop-blur-md text-white shadow-lg w-64 rounded-lg overflow-hidden border border-white/10"
               >
-                <motion.h1 whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }} className="px-4 py-3 cursor-pointer font-semibold text-l">AVAILABLE JOBS</motion.h1>
+                <motion.h1
+                  whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                  className="px-4 py-3 cursor-pointer font-semibold text-l"
+                  onClick={() => navigate('/available-jobs')} // Change this line
+                >
+                  AVAILABLE JOBS
+                </motion.h1>
+
                 <motion.h1 whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }} className="px-4 py-3 cursor-pointer font-semibold text-l">JOB CATEGORIES</motion.h1>
                 <motion.h1 whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }} className="px-4 py-3 cursor-pointer font-semibold text-l">JOB APPLICATION PROCESS</motion.h1>
               </motion.div>
