@@ -1,33 +1,47 @@
 import React, { useState } from 'react';
-import { Lock, Mail, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Lock, Mail, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-function App() {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Initialize navigation
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
+    setError('');
+    
+    try {
+      await login(email, password);
+      navigate('/'); // Redirect to home page after successful login
+    } catch (err) {
+      setError('Invalid credentials');
+    }
   };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-20">
       <div className="max-w-md w-full space-y-8 bg-black p-8 rounded-xl shadow-2xl border border-white/50 hover:border-white transition-colors duration-300 container-pulse">
-        {/* Header */}
         <div className="text-center">
           <User className="mx-auto h-12 w-12 text-white animate-float" />
           <h2 className="mt-6 text-3xl font-bold text-white">Welcome back</h2>
           <p className="mt-2 text-sm text-white/80">
             Please sign in to your account
           </p>
+          {error && (
+            <p className="mt-2 text-sm text-red-500">
+              {error}
+            </p>
+          )}
         </div>
 
-        {/* Login Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Email Input */}
             <div className="relative group">
               <label htmlFor="email" className="text-sm font-medium text-white block mb-2 transition-transform group-focus-within:translate-x-1">
                 Email address
@@ -49,7 +63,6 @@ function App() {
               </div>
             </div>
 
-            {/* Password Input */}
             <div className="relative group">
               <label htmlFor="password" className="text-sm font-medium text-white block mb-2 transition-transform group-focus-within:translate-x-1">
                 Password
@@ -72,7 +85,6 @@ function App() {
             </div>
           </div>
 
-          {/* Remember me and Forgot password */}
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -93,7 +105,6 @@ function App() {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full flex justify-center py-3 px-4 border border-white rounded-lg shadow-sm text-sm font-medium text-black bg-white hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
@@ -101,7 +112,6 @@ function App() {
             Sign in
           </button>
 
-          {/* Sign up link */}
           <p className="mt-4 text-center text-sm text-white/80">
             Don't have an account?{' '}
             <a href="#" onClick={() => navigate('/signup')} className="font-medium text-white hover:underline transition-all duration-300 hover:text-white/80">
@@ -113,5 +123,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

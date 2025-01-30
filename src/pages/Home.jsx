@@ -3,7 +3,6 @@ import React from 'react';
 import { LightbulbIcon as LightBulbIcon, BoltIcon, UsersIcon } from 'lucide-react';
 import HomeButton from '../components/HomeButton';
 import JourneySection from '../components/JourneySection';
-import FeaturesGrid from '../components/FeaturesGrid';
 import ContactFooter from '../components/ContactFooter';
 
 const Home = () => {
@@ -59,10 +58,9 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-black text-white pt-20">
+    <div className="min-h-screen flex flex-col relative bg-black text-white pt-15">
       <HomeButton />
       <JourneySection jobPosts={jobPosts} />
-      <FeaturesGrid features={features} />
       <ContactFooter />
     </div>
   );
