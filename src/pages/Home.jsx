@@ -61,7 +61,6 @@ const Home = () => {
     <div className="min-h-screen flex flex-col relative bg-black text-white pt-15">
       <HomeButton />
       <JourneySection jobPosts={jobPosts} />
-      <ContactFooter />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Lock, Mail, User, UserPlus, Briefcase, HardHat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function SignUp() {
+export default function SignUp() {
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -18,28 +18,34 @@ function SignUp() {
     e.preventDefault();
     setError('');
 
-    // Validate passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    // Validate password length
     if (password.length < 6) {
       setError('Password must be at least 6 characters long');
       return;
     }
 
     try {
-      await signup(name, email, password, accountType);
-      navigate('/'); // Redirect to home page after successful signup
+      const userData = {
+        name,
+        email,
+        password,
+        accountType,
+        createdAt: new Date().toISOString()
+      };
+
+      await signup(userData);
+      navigate('/');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'An error occurred during signup');
     }
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-28">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-28 pb-20">
       <div className="max-w-md w-full space-y-8 bg-black p-8 rounded-xl shadow-2xl border border-white/50 hover:border-white transition-colors duration-300 container-pulse">
         <div className="text-center">
           <UserPlus className="mx-auto h-12 w-12 text-white animate-float" />
@@ -48,7 +54,7 @@ function SignUp() {
             Join us today and get started
           </p>
           {error && (
-            <p className="mt-2 text-sm text-red-500">
+            <p className="mt-2 text-sm text-red-500 bg-red-500/10 p-2 rounded-lg border border-red-500/20">
               {error}
             </p>
           )}
@@ -215,5 +221,3 @@ function SignUp() {
     </div>
   );
 }
-
-export default SignUp;

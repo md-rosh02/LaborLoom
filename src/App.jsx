@@ -11,18 +11,26 @@ import JobAppPro from './pages/JobAppProc'
 import Team from './pages/Team';
 import Mission from './pages/MissionVis';
 import { AuthProvider } from './context/AuthContext';
+import ContactFooter from './components/ContactFooter';
+import HomeButton from './components/HomeButton';
+import PostJob from './pages/PostJob';
+import ContractorProfile from './pages/ContractorProfile';
 
 
 const App = () => {
   
   return (
-    <AuthProvider>
       <Router>
+    <AuthProvider>
         {/* Navbar should be rendered on every page */}
         <Navbar />
+        <ContactFooter/>
+        <HomeButton/>
+
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/profile" element={<LaborerProfile />} />
+          <Route path="/profile/labor" element={<LaborerProfile />} />
+          <Route path="/profile/contractor" element={<ContractorProfile />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -31,9 +39,10 @@ const App = () => {
           <Route path="/job-app-pro" element={<JobAppPro />} />
           <Route path="/team" element={<Team />} />
           <Route path="/mission" element={<Mission/>} />
+          <Route path="/post-job" element={<PostJob/>} />
         </Routes>
-      </Router>
     </AuthProvider>
+      </Router>
   );
 };
 

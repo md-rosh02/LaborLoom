@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from "react-intersection-observer";
 import { BoltIcon, ChevronLeftIcon, ChevronRightIcon, Briefcase, MapPin, Trophy, Users } from 'lucide-react';
 import JobCard from './JobCard';
+import { useNavigate } from 'react-router-dom';
+
+
 
 // Sample job posts data
 const sampleJobPosts = [
@@ -131,6 +134,17 @@ const JobSection = ({ title, emoji }) => {
 };
 
 const JourneySection = () => {
+
+  const [userType, setUserType] = useState(null);
+
+  useEffect(() => {
+    // Fetch userType from localStorage or your AuthContext
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    setUserType(userData.accountType);
+  }, []);
+
+
+  const navigate = useNavigate();
   const { ref: journeyRef, inView: journeyInView } = useInView({
     threshold: 0.2,
     triggerOnce: true,
@@ -182,14 +196,31 @@ const JourneySection = () => {
               </motion.button>
             </div>
             
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white text-black px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors md:w-auto w-full"
-            >
-              <BoltIcon className="h-5 w-5" />
-              <span>Post Job</span>
-            </motion.button>
+            <motion.div
+        className="flex justify-center gap-4"
+      >
+        {userType === 'labor' && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white text-black px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors md:w-auto w-full"
+          >
+            <BoltIcon className="h-5 w-5" />
+            <span onClick={() => navigate('/available-jobs')}>Find Job</span>
+          </motion.button>
+        )}
+
+        {userType === 'contractor' && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-white text-black px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors md:w-auto w-full"
+          >
+            <BoltIcon className="h-5 w-5" />
+            <span onClick={() => navigate('/post-job')}>Post Job</span>
+          </motion.button>
+        )}
+      </motion.div>
           </div>
         </motion.div>
 

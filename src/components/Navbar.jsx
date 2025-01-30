@@ -1,18 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import logo from "../assets/img/search.png";
-import profileImg from "../assets/img/profile.jpg";
+import { Search } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const [searchVisible, setSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+  const [userType, setUserType] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
 
-  const toggleSearch = () => setSearchVisible(!searchVisible);
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Fetch user type and profile data from localStorage
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      setUserType(userData.userType);
+      setProfileImage(userData.profileImage || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400');
+    }
+  }, [isAuthenticated]);
+
+  const toggleSearch = () => {
+    setSearchVisible(!searchVisible);
+    if (searchVisible) {
+      setSearchQuery('');
+      setSearchResults([]);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    if (query.trim()) {
+      const results = simulateSearch(query);
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchVisible(false);
+      setSearchResults([]);
+    }
+  };
+
+  const simulateSearch = (query) => {
+    const dummyResults = [
+      'Construction Worker',
+      'Carpenter',
+      'Plumber',
+      'Electrician',
+      'Painter'
+    ];
+    
+    return dummyResults.filter(item => 
+      item.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 5);
+  };
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleDropdown = (menu) => setOpenMenu(openMenu === menu ? null : menu);
   
@@ -25,6 +78,18 @@ const Navbar = () => {
     logout();
     setMenuOpen(false);
     navigate('/');
+  };
+
+  const handleProfileClick = () => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log(userData)
+    console.log(userData.accountType)
+    setMenuOpen(false);
+    if (userData.accountType === 'labor') {
+      navigate('/profile/labor');
+    } else if (userData.accountType === 'contractor') {
+      navigate('/profile/contractor');
+    }
   };
 
   const navItemVariants = {
@@ -60,7 +125,8 @@ const Navbar = () => {
       >
         <motion.h1 
           whileHover={{ scale: 1.05 }}
-          className="font-semibold text-white"
+          onClick={() => navigate('/')}
+          className="font-semibold text-white hover:cursor-pointer"
         >
           LaborLoom
         </motion.h1>
@@ -70,32 +136,62 @@ const Navbar = () => {
         <motion.div className="flex items-center gap-2 relative">
           <AnimatePresence>
             {searchVisible && (
-              <motion.input
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "800px", opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                type="text"
-                placeholder="Search..."
-                className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 mx-3 focus:outline-none focus:border-white/40 text-white placeholder-white/50"
-              />
+              <>
+                <motion.input
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: "800px", opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onKeyPress={handleSearchSubmit}
+                  placeholder="Search for workers..."
+                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 mx-3 focus:outline-none focus:border-white/40 text-white placeholder-white/50"
+                />
+                <AnimatePresence>
+                  {searchResults.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full left-3 right-3 mt-2 bg-black/90 backdrop-blur-md rounded-lg border border-white/10 overflow-hidden"
+                    >
+                      {searchResults.map((result, index) => (
+                        <motion.div
+                          key={index}
+                          whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                          className="px-4 py-2 cursor-pointer text-white"
+                          onClick={() => {
+                            navigate(`/search?q=${encodeURIComponent(result)}`);
+                            setSearchVisible(false);
+                            setSearchResults([]);
+                          }}
+                        >
+                          {result}
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </>
             )}
           </AnimatePresence>
-          <motion.img
+          <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="h-6 cursor-pointer invert"
-            src={logo}
-            alt="Search"
+            className="cursor-pointer text-white"
             onClick={toggleSearch}
-          />
+          >
+            <Search size={24} />
+          </motion.div>
         </motion.div>
 
         {isAuthenticated ? (
           <div className="relative">
             <motion.img
               whileHover={{ scale: 1.1 }}
-              src={profileImg}
+              src={profileImage}
               alt="Profile"
               className="h-10 w-10 rounded-full cursor-pointer border-2 border-white/20"
               onClick={toggleMenu}
@@ -109,19 +205,25 @@ const Navbar = () => {
                   exit="exit"
                   className="absolute right-0 mt-2 bg-black/90 backdrop-blur-md text-white shadow-lg rounded-lg w-48 overflow-hidden border border-white/10"
                 >
-                  <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
-                    <Link to="/profile" className="block px-4 py-3 font-semibold text-l">Profile</Link>
+                  <motion.div 
+                    whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                    onClick={handleProfileClick}
+                    className="cursor-pointer"
+                  >
+                    <div className="block px-4 py-3 font-semibold text-l">
+                      Profile
+                    </div>
                   </motion.div>
                   <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
                     <Link to="/settings" className="block px-4 py-3 font-semibold text-l">Settings</Link>
                   </motion.div>
-                  <motion.h1
+                  <motion.div
                     whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
                     className="px-4 py-3 cursor-pointer font-semibold text-l"
                     onClick={handleLogout}
                   >
                     Logout
-                  </motion.h1>
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>

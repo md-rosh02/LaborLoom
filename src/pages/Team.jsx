@@ -4,41 +4,24 @@ import { Briefcase, Github, Linkedin, Mail } from 'lucide-react';
 const Team = () => {
   const teamMembers = [
     {
-      name: "Sarah Chen",
+      
+      name: "Roshan",
       role: "Project Lead & Full Stack Developer",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80",
       bio: "10+ years of experience in building scalable platforms. Passionate about creating technology that makes a difference in people's lives.",
       linkedin: "#",
       github: "#",
       email: "sarah@projectmestri.com"
     },
     {
-      name: "Michael Rodriguez",
-      role: "UI/UX Designer",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80",
+      name: "Manoj",
+      role: "Project Lead & Full Stack Developer",
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80",
       bio: "Design expert focused on creating intuitive and accessible interfaces. Advocates for user-centered design principles.",
       linkedin: "#",
       github: "#",
       email: "michael@projectmestri.com"
     },
-    {
-      name: "Priya Patel",
-      role: "Backend Developer",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80",
-      bio: "Specialized in building robust backend systems and APIs. Experienced in handling large-scale data operations.",
-      linkedin: "#",
-      github: "#",
-      email: "priya@projectmestri.com"
-    },
-    {
-      name: "James Wilson",
-      role: "Product Manager",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80",
-      bio: "Strategic thinker with expertise in product development and market analysis. Focused on delivering value to both workers and employers.",
-      linkedin: "#",
-      github: "#",
-      email: "james@projectmestri.com"
-    }
   ];
 
   return (
