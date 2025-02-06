@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
 
@@ -105,12 +106,14 @@ const HomeButton = () => {
                   transition: { duration: 0.2 }
                 }}
                 className="px-6 py-3 cursor-pointer font-medium text-sm border-b border-white/5 last:border-b-0 flex items-center"
-                onClick={() => {
-                  window.location.href = item.path;
-                  setOpenMenu(false);
-                }}
+                onClick={() => setOpenMenu(false)}
               >
-                {item.title}
+                <Link 
+                  to={item.path} 
+                  className="w-full block"
+                >
+                  {item.title}
+                </Link>
               </motion.div>
             ))}
           </motion.div>

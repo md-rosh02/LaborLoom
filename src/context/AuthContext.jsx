@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
+
 export function AuthProvider({ children }) {
+  const [loggedIn, setLoggedIn] = useState("");
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -36,7 +38,7 @@ export function AuthProvider({ children }) {
           name: userData.name,
           email: userData.email,
           accountType: userData.accountType,
-          createdAt: userData.createdAt
+          createdAt: userData.createdAt,
         };
 
         // Store current user in localStorage
@@ -83,6 +85,7 @@ export function AuthProvider({ children }) {
       login,
       signup,
       logout,
+      loggedIn, setLoggedIn,
       isAuthenticated: !!user
     }}>
       {children}
@@ -97,3 +100,4 @@ export function useAuth() {
   }
   return context;
 }
+

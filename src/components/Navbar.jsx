@@ -17,7 +17,6 @@ const Navbar = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // Fetch user type and profile data from localStorage
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
       setUserType(userData.userType);
       setProfileImage(userData.profileImage || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400');
@@ -74,16 +73,17 @@ const Navbar = () => {
     navigate('/login');
   };
   
+  const { setLoggedIn } = useAuth();
+
   const handleLogout = () => {
     logout();
+    setLoggedIn("LoggedOut");
     setMenuOpen(false);
     navigate('/');
   };
 
   const handleProfileClick = () => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log(userData)
-    console.log(userData.accountType)
     setMenuOpen(false);
     if (userData.accountType === 'labor') {
       navigate('/profile/labor');
@@ -92,188 +92,77 @@ const Navbar = () => {
     }
   };
 
-  const navItemVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.2 } }
-  };
-
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.2 }
-    },
-    exit: { 
-      opacity: 0,
-      y: -10,
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
     <motion.div 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-white/10 backdrop-blur-md flex justify-between items-center h-12 p-8 text-l fixed top-0 left-0 w-full z-50 border-b border-white/10"
+      className="bg-white backdrop-blur-md flex justify-between items-center h-16 p-8 text-l fixed top-0 left-0 w-full z-50 border-b border-gray-200 shadow-sm"
+      style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="text-3xl"
+      <motion.h1 
+        whileHover={{ scale: 1.05 }}
+        onClick={() => navigate('/')}
+        className="font-semibold text-gray-800 hover:cursor-pointer text-3xl"
       >
-        <motion.h1 
-          whileHover={{ scale: 1.05 }}
-          onClick={() => navigate('/')}
-          className="font-semibold text-white hover:cursor-pointer"
-        >
-          LaborLoom
-        </motion.h1>
-      </motion.div>
+        LaborLoom
+      </motion.h1>
 
       <div className="flex items-center gap-8">
-        <motion.div className="flex items-center gap-2 relative">
-          <AnimatePresence>
-            {searchVisible && (
-              <>
-                <motion.input
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: "800px", opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onKeyPress={handleSearchSubmit}
-                  placeholder="Search for workers..."
-                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 mx-3 focus:outline-none focus:border-white/40 text-white placeholder-white/50"
-                />
-                <AnimatePresence>
-                  {searchResults.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-3 right-3 mt-2 bg-black/90 backdrop-blur-md rounded-lg border border-white/10 overflow-hidden"
-                    >
-                      {searchResults.map((result, index) => (
-                        <motion.div
-                          key={index}
-                          whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-                          className="px-4 py-2 cursor-pointer text-white"
-                          onClick={() => {
-                            navigate(`/search?q=${encodeURIComponent(result)}`);
-                            setSearchVisible(false);
-                            setSearchResults([]);
-                          }}
-                        >
-                          {result}
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            )}
-          </AnimatePresence>
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="cursor-pointer text-white"
-            onClick={toggleSearch}
-          >
-            <Search size={24} />
-          </motion.div>
-        </motion.div>
-
-        {isAuthenticated ? (
-          <div className="relative">
-            <motion.img
-              whileHover={{ scale: 1.1 }}
-              src={profileImage}
-              alt="Profile"
-              className="h-10 w-10 rounded-full cursor-pointer border-2 border-white/20"
-              onClick={toggleMenu}
-            />
-            <AnimatePresence>
-              {menuOpen && (
-                <motion.div
-                  variants={dropdownVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="absolute right-0 mt-2 bg-black/90 backdrop-blur-md text-white shadow-lg rounded-lg w-48 overflow-hidden border border-white/10"
-                >
-                  <motion.div 
-                    whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-                    onClick={handleProfileClick}
-                    className="cursor-pointer"
-                  >
-                    <div className="block px-4 py-3 font-semibold text-l">
-                      Profile
-                    </div>
-                  </motion.div>
-                  <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
-                    <Link to="/settings" className="block px-4 py-3 font-semibold text-l">Settings</Link>
-                  </motion.div>
-                  <motion.div
-                    whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-                    className="px-4 py-3 cursor-pointer font-semibold text-l"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        ) : (
-          <div className="flex gap-4">
+        <motion.div className="relative">
+          {isAuthenticated ? (
             <div className="relative">
-              <motion.h1
-                variants={navItemVariants}
-                whileHover="hover"
-                className="text-white hover:bg-white/10 px-4 py-2 font-semibold text-l rounded-lg transition-all duration-300 cursor-pointer"
-                onClick={() => toggleDropdown('about')}
-              >
-                ENG / HIN
-              </motion.h1>
+              <motion.img
+                whileHover={{ scale: 1.1 }}
+                src={profileImage}
+                alt="Profile"
+                className="h-10 w-10 rounded-full cursor-pointer border-2 border-gray-200"
+                onClick={toggleMenu}
+              />
               <AnimatePresence>
-                {openMenu === 'about' && (
+                {menuOpen && (
                   <motion.div
-                    variants={dropdownVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="absolute top-full mt-2 bg-black/90 backdrop-blur-md text-white shadow-lg w-30 rounded-lg overflow-hidden border border-white/10 text-center"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 mt-2 bg-white backdrop-blur-md text-gray-800 shadow-lg rounded-lg w-48 overflow-hidden border border-gray-200"
                   >
-                    <motion.h1 whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }} className="px-4 py-3 cursor-pointer font-semibold text-l">ENGLISH</motion.h1>
-                    <motion.h1 whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }} className="px-4 py-3 cursor-pointer font-semibold text-l">HINDI</motion.h1>
-                    <motion.h1 whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }} className="px-4 py-3 cursor-pointer font-semibold text-l">KANNADA</motion.h1>
+                    <motion.div 
+                      whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                      onClick={handleProfileClick}
+                      className="cursor-pointer px-4 py-3 font-semibold text-l"
+                    >
+                      Profile
+                    </motion.div>
+                    <motion.div 
+                      whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                      onClick={() => navigate('/profile/edit')}
+                      className="cursor-pointer px-4 py-3 font-semibold text-l"
+                    >
+                      Edit Profile
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                      className="px-4 py-3 cursor-pointer font-semibold text-l"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </motion.div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-
+          ) : (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border border-white/20 px-4 py-1 rounded-lg text-white hover:bg-white/10 transition-all duration-300 text-l font-semibold"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 border border-blue-600 px-4 py-1 rounded-lg text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 text-l font-semibold shadow-md"
               onClick={handleLogin}
             >
               LOGIN
             </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white/10 border border-white/20 px-4 py-1 rounded-lg text-white hover:bg-white/20 transition-all duration-300 text-l font-semibold"
-              onClick={() => navigate('/signup')}
-            >
-              SIGNUP
-            </motion.button>
-          </div>
-        )}
+          )}
+        </motion.div>
       </div>
     </motion.div>
   );
