@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { Lock, Mail, User, UserPlus, Briefcase, HardHat, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 // import { useAuth } from '../context/AuthContext';
+import {auth ,db} from '../components/firebase'
+import { setDoc, doc } from "firebase/firestore"
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -19,34 +24,57 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
-
     try {
-      const userData = {
-        name,
-        email,
-        password,
-        accountType,
-        createdAt: new Date().toISOString()
-      };
-
-      await signup(userData);
-      navigate('/');
-      setLoggedIn('LoggedIn'); // Set global state
-
-    } catch (err) {
-      setError(err.message || 'An error occurred during signup');
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      console.log(user);
+      if(user){
+        await setDoc(doc(db, "Users", user.uid), {
+          email:user.email,
+          fname:name,
+          role:accountType,
+        });
+      }
+      console.log("User Successfully registered!!!");
+      toast.success("User Successfully registered!!!",{
+        position: 'top-right',
+      });
+      auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      console.log(error.message);
+      toast.success(error.message,{
+        postion: "bottom-center",
+      });
     }
+
+
+    // if (password !== confirmPassword) {
+    //   setError('Passwords do not match');
+    //   return;
+    // }
+
+    // if (password.length < 6) {
+    //   setError('Password must be at least 6 characters long');
+    //   return;
+    // }
+
+    // try {
+    //   const userData = {
+    //     name,
+    //     email,
+    //     password,
+    //     accountType,
+    //     createdAt: new Date().toISOString()
+    //   };
+
+    //   await signup(userData);
+    //   navigate('/');
+    //   setLoggedIn('LoggedIn'); // Set global state
+
+    // } catch (err) {
+    //   setError(err.message || 'An error occurred during signup');
+    // }
   };
 
   const calculatePasswordStrength = (password) => {
@@ -278,6 +306,7 @@ export default function SignUp() {
               Sign in
             </button>
           </p>
+          <ToastContainer />
         </form>
       </div>
     </div>

@@ -3,17 +3,24 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Search } from 'lucide-react';
+import {auth ,db} from '../components/firebase'
+import { getDoc, doc } from "firebase/firestore"
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
-  const [userType, setUserType] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [ user, setUser ] = useState();
+
+  useEffect(()=>{
+    auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+  });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -72,22 +79,46 @@ const Navbar = () => {
     setMenuOpen(false);
     navigate('/login');
   };
-  
-  const { setLoggedIn } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    setLoggedIn("LoggedOut");
-    setMenuOpen(false);
-    navigate('/');
+  const [userdetails , setUserDetails] = useState(null);
+
+  const fetchData = async () => {
+    auth.onAuthStateChanged(async (user) =>{
+      console.log(user);
+      if(user){
+      const docRef = doc(db, "Users", user.uid);
+      const docSnap = await getDoc(docRef);
+      if(docSnap.exists()){
+        setUserDetails(docSnap.data());
+        console.log(docSnap.data());
+      }else{
+        console.log('not logged in');
+      }
+    }
+    });
+
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function handleLogout(){
+    try{
+     await auth.signOut();
+     window.location.href="/";
+     console.log("User Logged out");
+   } catch (error){
+     console.log("Error Logging Out: ", error.message);
+   }
+ }
+
   const handleProfileClick = () => {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    
     setMenuOpen(false);
-    if (userData.accountType === 'labor') {
+    if (userdetails.role === 'labor') {
       navigate('/profile/labor');
-    } else if (userData.accountType === 'contractor') {
+    } else if (userdetails.role === 'contractor') {
       navigate('/profile/contractor');
     }
   };
@@ -110,7 +141,7 @@ const Navbar = () => {
 
       <div className="flex items-center gap-8">
         <motion.div className="relative">
-          {isAuthenticated ? (
+          {user ? (
             <div className="relative">
               <motion.img
                 whileHover={{ scale: 1.1 }}

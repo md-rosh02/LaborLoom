@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, User, Briefcase, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import {auth} from '../components/firebase'
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,13 +22,22 @@ export default function Login() {
     setError('');
 
     try {
-      await login(email, password, role);
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("User logged in successfully");
+      toast.success("User Successfully registered!!!",{
+        position: 'top-right',
+      });
       navigate('/');
       setLoggedIn('LoggedIn'); // Set global state
-    } catch (err) {
-      setError(err.message || 'An error occurred during login');
+    } catch (error) {
+      setError(error.message);
+      console.log(error.msg);
+      toast.success(error.message,{
+        postion: 'top-right',
+      });
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pt-20 pb-20">
@@ -162,6 +176,7 @@ export default function Login() {
               Sign up
             </a>
           </p>
+          <ToastContainer />
         </form>
       </div>
     </div>

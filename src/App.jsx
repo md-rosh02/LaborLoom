@@ -15,6 +15,7 @@ import ContactFooter from './components/ContactFooter';
 import HomeButton from './components/HomeButton';
 import PostJob from './pages/PostJob';
 import ContractorProfile from './pages/ContractorProfile';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const App = () => {
@@ -31,8 +32,8 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/profile/labor" element={<LaborerProfile />} />
           <Route path="/profile/contractor" element={<ContractorProfile />} />
-          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/available-jobs" element={<AvailableJobsPage />} />
