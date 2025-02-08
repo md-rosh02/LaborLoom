@@ -65,7 +65,6 @@ const HomeButton = () => {
   const menuItems = [
     { title: 'Home', path: '/' },
     { title: 'Available Jobs', path: '/available-jobs' },
-    { title: 'Job Application Process', path: '/job-app-pro' },
     { title: 'Contact', path: '/contact' },
     { title: 'Mission & Vision', path: '/mission' },
     { title: 'Team', path: '/team' }
@@ -77,7 +76,7 @@ const HomeButton = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpenMenu(!openMenu)}
-        className="bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-900 transition-all duration-300"
+        className="bg-gray-500 text-white p-3 rounded-full shadow-lg hover:bg-gray-500 transition-all duration-300"
       >
         <motion.div
           animate={{ rotate: openMenu ? 180 : 0 }}
@@ -94,7 +93,7 @@ const HomeButton = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute bottom-full mb-4 bg-black text-white shadow-2xl rounded-2xl overflow-hidden border border-white/10 w-[250px] backdrop-blur-lg"
+            className="absolute bottom-full mb-4 bg-gray-200 text-black shadow-2xl rounded-2xl overflow-hidden border border-white/10 w-[250px] backdrop-blur-lg"
           >
             {menuItems.map((item, index) => (
               <motion.div

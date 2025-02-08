@@ -134,13 +134,6 @@ const Navbar = () => {
                     >
                       Profile
                     </motion.div>
-                    <motion.div 
-                      whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
-                      onClick={() => navigate('/profile/edit')}
-                      className="cursor-pointer px-4 py-3 font-semibold text-l"
-                    >
-                      Edit Profile
-                    </motion.div>
                     <motion.div
                       whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
                       className="px-4 py-3 cursor-pointer font-semibold text-l"

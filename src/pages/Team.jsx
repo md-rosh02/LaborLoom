@@ -25,14 +25,14 @@ const Team = () => {
   ];
 
   return (
-    <div className="bg-black text-white min-h-screen py-16 pt-26">
+    <div className="bg-white text-black min-h-screen py-16 pt-26">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-20">
-          <h1 className="text-5xl font-bold mb-4 text-white">
+        <div className="text-center mb-10">
+          <h1 className="text-5xl font-bold mb-2 text-black">
             Our Team
           </h1>
-          <div className="w-24 h-1 bg-white mx-auto mb-8"></div>
-          <p className="text-white max-w-2xl mx-auto text-lg">
+          <div className="w-24 h-1 bg-black mx-auto mb-4"></div>
+          <p className="text-black max-w-2xl mx-auto text-lg">
             Meet the dedicated professionals behind Project Mestri who are working to revolutionize the labor hiring process.
           </p>
         </div>
@@ -41,7 +41,7 @@ const Team = () => {
           {teamMembers.map((member, index) => (
             <div 
               key={index} 
-              className="bg-black rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105 border border-white hover:bg-white hover:text-black group"
+              className="bg-gray-300 rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105 border border-white hover:bg-white hover:text-black group"
             >
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-2/5 relative overflow-hidden">
